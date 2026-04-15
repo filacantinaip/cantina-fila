@@ -1,577 +1,516 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Fila Cantina</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0f0f11;
-    --surface: #1a1a1f;
-    --border: #2a2a32;
-    --accent: #e8ff47;
-    --accent2: #47c8ff;
-    --green: #47ffb0;
-    --red: #ff6b47;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Fila Cantina</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f11;
+      --surface: #1a1a1f;
+      --border: #2a2a32;
+      --accent: #e8ff47;
+      --accent2: #47c8ff;
+      --green: #47ffb0;
+      --red: #ff6b47;
+      --text: #e8e8f0;
+      --muted: #6b6b80;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 24px;
-    overflow: hidden;
-  }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      overflow: hidden;
+    }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(232,255,71,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(232,255,71,0.025) 1px, transparent 1px);
-    background-size: 36px 36px;
-    pointer-events: none;
-  }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,255,71,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,255,71,0.025) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 40px 32px;
-    width: 100%;
-    max-width: 380px;
-    text-align: center;
-    position: relative;
-    z-index: 1;
-    transition: border-color 0.4s;
-  }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      transition: border-color 0.4s;
+    }
 
-  .card.state-entrada { border-color: var(--accent); }
-  .card.state-saida   { border-color: var(--accent2); }
-  .card.state-ok      { border-color: var(--green); }
-  .card.state-erro    { border-color: var(--red); }
+    .card.state-entrada { border-color: var(--accent); }
+    .card.state-saida   { border-color: var(--accent2); }
+    .card.state-ok      { border-color: var(--green); }
+    .card.state-erro    { border-color: var(--red); }
 
-  .icon {
-    font-size: 56px;
-    line-height: 1;
-    margin-bottom: 24px;
-    display: block;
-    animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
+    .icon {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 24px;
+      display: block;
+      animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
 
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: 26px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    line-height: 1.1;
-  }
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.1;
+    }
 
-  .sub {
-    font-size: 14px;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 32px;
-  }
+    .sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
 
-  .btn {
-    display: block;
-    width: 100%;
-    padding: 18px;
-    border-radius: 12px;
-    border: none;
-    font-family: 'Syne', sans-serif;
-    font-size: 17px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.15s, opacity 0.15s;
-    letter-spacing: 0.3px;
-  }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+      letter-spacing: 0.3px;
+    }
 
-  .btn:active { transform: scale(0.97); opacity: 0.85; }
+    .btn:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
 
-  .btn-entrada {
-    background: var(--accent);
-    color: #0f0f11;
-  }
+    .btn-entrada {
+      background: var(--accent);
+      color: #0f0f11;
+    }
 
-  .btn-saida {
-    background: var(--accent2);
-    color: #0f0f11;
-  }
+    .btn-saida {
+      background: var(--accent2);
+      color: #0f0f11;
+    }
 
-  .btn-reset {
-    background: transparent;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    padding: 12px;
-    margin-top: 12px;
-  }
+    .btn-reset {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      padding: 12px;
+      margin-top: 12px;
+    }
 
-  .token-display {
-    margin-top: 24px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px;
-  }
+    .token-display {
+      margin-top: 24px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
 
-  .token-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
+    .token-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
 
-  .token-code {
-    font-family: 'DM Mono', monospace;
-    font-size: 28px;
-    font-weight: 500;
-    color: var(--accent);
-    letter-spacing: 6px;
-  }
+    .token-code {
+      font-family: 'DM Mono', monospace;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 6px;
+    }
 
-  .token-hint {
-    font-size: 11px;
-    color: var(--muted);
-    margin-top: 6px;
-    line-height: 1.5;
-  }
+    .token-hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
 
-  .status-badge {
-    display: inline-block;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-  }
+    .status-badge {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
 
-  .badge-entrada { background: rgba(232,255,71,0.1); color: var(--accent); }
-  .badge-saida   { background: rgba(71,200,255,0.1); color: var(--accent2); }
-  .badge-ok      { background: rgba(71,255,176,0.1); color: var(--green); }
-  .badge-erro    { background: rgba(255,107,71,0.1); color: var(--red); }
+    .badge-entrada { background: rgba(232,255,71,0.1); color: var(--accent); }
+    .badge-saida   { background: rgba(71,200,255,0.1); color: var(--accent2); }
+    .badge-ok      { background: rgba(71,255,176,0.1); color: var(--green); }
+    .badge-erro    { background: rgba(255,107,71,0.1); color: var(--red); }
 
-  .time-display {
-    font-family: 'Syne', sans-serif;
-    font-size: 42px;
-    font-weight: 800;
-    color: var(--green);
-    margin: 16px 0 4px;
-  }
+    .time-display {
+      font-family: 'Syne', sans-serif;
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--green);
+      margin: 16px 0 4px;
+    }
 
-  .time-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
+    .time-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
 
-  .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 20px;
-  }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 20px;
+    }
 
-  /* CONFIG PANEL (apenas para desenvolvimento/admin) */
-  .config-toggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    cursor: pointer;
-    z-index: 10;
-    transition: border-color 0.2s;
-  }
-  .config-toggle:hover { border-color: var(--muted); }
+    .mode-indicator {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      z-index: 10;
+    }
 
-  .config-panel {
-    position: fixed;
-    bottom: 60px;
-    right: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
-    width: 280px;
-    z-index: 10;
-    display: none;
-    font-size: 13px;
-  }
+    .mode-indicator span {
+      color: var(--accent);
+    }
 
-  .config-panel.open { display: block; }
+    @keyframes pop {
+      from { transform: scale(0.6); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
 
-  .config-panel h4 {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    margin-bottom: 12px;
-    color: var(--muted);
-  }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
-  .config-field { margin-bottom: 12px; }
-  .config-field label { display: block; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; }
-  .config-field input {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 10px;
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-  }
-  .config-field input:focus { outline: 1px solid var(--accent); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-  .config-save {
-    width: 100%;
-    padding: 10px;
-    background: var(--accent);
-    color: #0f0f11;
-    border: none;
-    border-radius: 6px;
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-  }
-
-  .mode-indicator {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
-    z-index: 10;
-  }
-
-  .mode-indicator span {
-    color: var(--accent);
-  }
-
-  @keyframes pop {
-    from { transform: scale(0.6); opacity: 0; }
-    to   { transform: scale(1);   opacity: 1; }
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .fade-in { animation: fadeIn 0.35s ease both; }
-</style>
+    .fade-in {
+      animation: fadeIn 0.35s ease both;
+    }
+  </style>
 </head>
 <body>
 
-<div class="mode-indicator" id="modeIndicator"></div>
+  <div class="mode-indicator" id="modeIndicator"></div>
 
-<!-- CARD PRINCIPAL -->
-<div class="card" id="mainCard">
-  <div id="appContent"></div>
-</div>
-
-<!-- CONFIG (admin) -->
-<div class="config-toggle" id="configToggle" onclick="toggleConfig()">⚙ config</div>
-<div class="config-panel" id="configPanel">
-  <h4>Configuração (admin)</h4>
-  <div class="config-field">
-    <label>URL Power Automate — Entrada</label>
-    <input type="text" id="cfgUrlEntrada" placeholder="https://prod-xx.westeurope.logic.azure.com/...">
+  <div class="card" id="mainCard">
+    <div id="appContent"></div>
   </div>
-  <div class="config-field">
-    <label>URL Power Automate — Saída</label>
-    <input type="text" id="cfgUrlSaida" placeholder="https://prod-xx.westeurope.logic.azure.com/...">
-  </div>
-  <div class="config-field">
-    <label>Modo</label>
-    <input type="text" id="cfgModo" placeholder="entrada | saida" value="">
-  </div>
-  <button class="config-save" onclick="saveConfig()">Guardar</button>
-</div>
 
-<script>
-// ─── CONFIGURAÇÃO ───────────────────────────────────────────────────────────
-const STORAGE_KEY = 'cantina_token';
-const STORAGE_TS  = 'cantina_entrada_ts';
-const TIMEOUT_MIN = 30;
+  <script>
+    const STORAGE_KEY = 'cantina_token';
+    const STORAGE_TS = 'cantina_entrada_ts';
+    const TIMEOUT_MIN = 30;
 
-// Endpoint Google Apps Script — único para entrada e saída
-const API_URL = 'https://script.google.com/macros/s/AKfycbxBxK6aU4Z7MjOB7Ycxfv1yYH9J00EOkVvz4aDeWr4FpAseKRxff7XBLtpNLARjQvGI4w/exec';
+    // Mete aqui o teu Web app URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxBxK6aU4Z7MjOB7Ycxfv1yYH9J00EOkVvz4aDeWr4FpAseKRxff7XBLtpNLARjQvGI4w/exec';
 
-// Detecta modo pelo URL param: ?modo=entrada ou ?modo=saida
-const urlParams = new URLSearchParams(window.location.search);
-const MODO = urlParams.get('modo') || 'entrada';
+    const urlParams = new URLSearchParams(window.location.search);
+    const MODO = urlParams.get('modo') || 'entrada';
 
-// ─── ESTADO ─────────────────────────────────────────────────────────────────
-let state = 'idle'; // idle | loading | ok | erro
+    window.onload = () => {
+      updateModeIndicator();
+      if (MODO === 'saida') {
+        renderSaida();
+      } else {
+        renderEntrada();
+      }
+    };
 
-// ─── INIT ───────────────────────────────────────────────────────────────────
-window.onload = () => {
-  updateModeIndicator();
-
-  if (MODO === 'saida') {
-    renderSaida();
-  } else {
-    renderEntrada();
-  }
-};
-
-function updateModeIndicator() {
-  const el = document.getElementById('modeIndicator');
-  el.innerHTML = `QR <span>${MODO.toUpperCase()}</span>`;
-}
-
-// ─── RENDER: ENTRADA ─────────────────────────────────────────────────────────
-function renderEntrada() {
-  const card = document.getElementById('mainCard');
-  card.className = 'card state-entrada fade-in';
-
-  // Verifica se já há token ativo (entrada já registada)
-  const token = localStorage.getItem(STORAGE_KEY);
-  const ts    = localStorage.getItem(STORAGE_TS);
-
-  if (token && ts) {
-    const minutos = Math.floor((Date.now() - parseInt(ts)) / 60000);
-    if (minutos < TIMEOUT_MIN) {
-      renderJaNaFila(token, minutos);
-      return;
-    } else {
-      // Token expirado — limpa
-      clearToken();
+    function updateModeIndicator() {
+      document.getElementById('modeIndicator').innerHTML = `QR <span>${MODO.toUpperCase()}</span>`;
     }
-  }
 
-  document.getElementById('appContent').innerHTML = `
-    <span class="icon">🍽️</span>
-    <div class="status-badge badge-entrada">Início da fila</div>
-    <h1>Bem-vindo à cantina</h1>
-    <p class="sub">Carrega no botão para registar a tua entrada na fila. Vais receber um código — mostra-o na caixa.</p>
-    <button class="btn btn-entrada" onclick="registarEntrada()">Registar entrada</button>
-  `;
-}
+    function renderEntrada() {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-entrada fade-in';
 
-// ─── RENDER: JÁ NA FILA ──────────────────────────────────────────────────────
-function renderJaNaFila(token, minutos) {
-  const card = document.getElementById('mainCard');
-  card.className = 'card state-entrada fade-in';
-  const codigo = token.slice(-4).toUpperCase();
+      const token = localStorage.getItem(STORAGE_KEY);
+      const ts = localStorage.getItem(STORAGE_TS);
 
-  document.getElementById('appContent').innerHTML = `
-    <span class="icon">⏳</span>
-    <div class="status-badge badge-entrada">Na fila</div>
-    <h1>Já estás registado</h1>
-    <p class="sub">Entraste há ${minutos} min. Mostra o código na caixa ao pagar.</p>
-    <div class="token-display">
-      <div class="token-label">O teu código</div>
-      <div class="token-code">${codigo}</div>
-      <div class="token-hint">A funcionária vai pedir este código ao pagar</div>
-    </div>
-    <button class="btn btn-reset" onclick="clearToken(); renderEntrada()">Não sou eu — limpar</button>
-  `;
-}
+      if (token && ts) {
+        const minutos = Math.floor((Date.now() - parseInt(ts, 10)) / 60000);
+        if (minutos < TIMEOUT_MIN) {
+          renderJaNaFila(token, minutos);
+          return;
+        }
+        clearToken();
+      }
 
-// ─── RENDER: SAÍDA ───────────────────────────────────────────────────────────
-function renderSaida() {
-  const card = document.getElementById('mainCard');
-  card.className = 'card state-saida fade-in';
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">🍽️</span>
+        <div class="status-badge badge-entrada">Início da fila</div>
+        <h1>Bem-vindo à cantina</h1>
+        <p class="sub">Carrega no botão para registar a tua entrada. No fim, lê o QR da caixa com este mesmo telemóvel.</p>
+        <button class="btn btn-entrada" onclick="registarEntrada()">Registar entrada</button>
+      `;
+    }
 
-  const token = localStorage.getItem(STORAGE_KEY);
-  const ts    = localStorage.getItem(STORAGE_TS);
+    function renderJaNaFila(token, minutos) {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-entrada fade-in';
+      const codigo = token.slice(-4).toUpperCase();
 
-  if (!token || !ts) {
-    renderSemEntrada();
-    return;
-  }
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">⏳</span>
+        <div class="status-badge badge-entrada">Na fila</div>
+        <h1>Já estás registado</h1>
+        <p class="sub">Entraste há ${minutos} min. No fim, lê o QR da caixa com este mesmo telemóvel.</p>
+        <div class="token-display">
+          <div class="token-label">Código de reserva</div>
+          <div class="token-code">${codigo}</div>
+          <div class="token-hint">Usa apenas se houver problema no registo automático</div>
+        </div>
+        <button class="btn btn-reset" onclick="clearToken(); renderEntrada()">Não sou eu — limpar</button>
+      `;
+    }
 
-  const minutos = Math.floor((Date.now() - parseInt(ts)) / 60000);
-  if (minutos >= TIMEOUT_MIN) {
-    clearToken();
-    renderSemEntrada();
-    return;
-  }
+    function renderSaida() {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-saida fade-in';
 
-  const codigo = token.slice(-4).toUpperCase();
+      const token = localStorage.getItem(STORAGE_KEY);
+      const ts = localStorage.getItem(STORAGE_TS);
 
-  document.getElementById('appContent').innerHTML = `
-    <span class="icon">✅</span>
-    <div class="status-badge badge-saida">Saída — Caixa</div>
-    <h1>Confirmar saída da fila</h1>
-    <p class="sub">Código detectado. Carrega para registar a saída e fechar o teu registo.</p>
-    <div class="token-display">
-      <div class="token-label">Código</div>
-      <div class="token-code">${codigo}</div>
-    </div>
-    <br>
-    <button class="btn btn-saida" onclick="registarSaida('${token}', ${parseInt(ts)})">Confirmar saída</button>
-    <button class="btn btn-reset" onclick="renderSemEntrada()">Não tenho código</button>
-  `;
-}
+      if (!token || !ts) {
+        renderSemEntrada();
+        return;
+      }
 
-// ─── RENDER: SEM ENTRADA ─────────────────────────────────────────────────────
-function renderSemEntrada() {
-  const card = document.getElementById('mainCard');
-  card.className = 'card state-saida fade-in';
+      const minutos = Math.floor((Date.now() - parseInt(ts, 10)) / 60000);
+      if (minutos >= TIMEOUT_MIN) {
+        clearToken();
+        renderSemEntrada();
+        return;
+      }
 
-  document.getElementById('appContent').innerHTML = `
-    <span class="icon">🤔</span>
-    <div class="status-badge badge-saida">Saída — Caixa</div>
-    <h1>Sem registo de entrada</h1>
-    <p class="sub">Não encontrámos registo de entrada neste telemóvel. Leste o QR code no início da fila?</p>
-    <button class="btn btn-reset" onclick="renderSaida()">Tentar novamente</button>
-  `;
-}
+      const codigo = token.slice(-4).toUpperCase();
 
-// ─── ACÇÕES ──────────────────────────────────────────────────────────────────
-async function registarEntrada() {
-  const token = gerarToken();
-  const ts    = Date.now();
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">✅</span>
+        <div class="status-badge badge-saida">Saída — Caixa</div>
+        <h1>Confirmar saída da fila</h1>
+        <p class="sub">Registo encontrado neste telemóvel. Carrega para fechar o registo.</p>
+        <div class="token-display">
+          <div class="token-label">Código de reserva</div>
+          <div class="token-code">${codigo}</div>
+        </div>
+        <br>
+        <button class="btn btn-saida" onclick="registarSaida('${token}', ${parseInt(ts, 10)})">Confirmar saída</button>
+        <button class="btn btn-reset" onclick="renderSemEntrada()">Não tenho registo neste telemóvel</button>
+      `;
+    }
 
-  localStorage.setItem(STORAGE_KEY, token);
-  localStorage.setItem(STORAGE_TS, ts.toString());
+    function renderSemEntrada() {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-saida fade-in';
 
-  renderLoading('A registar entrada...');
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">🤔</span>
+        <div class="status-badge badge-saida">Saída — Caixa</div>
+        <h1>Sem registo de entrada</h1>
+        <p class="sub">Não encontrámos registo neste telemóvel. Usa o código de reserva apenas se for preciso.</p>
+        <button class="btn btn-reset" onclick="renderSaida()">Tentar novamente</button>
+      `;
+    }
 
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token_id:   token,
-        entrada_ts: new Date(ts).toISOString(),
-        modo:       'entrada'
-      })
-    });
-    renderEntradaOk(token);
-  } catch (e) {
-    // Token guardado localmente mesmo sem rede
-    renderEntradaOk(token, true);
-  }
-}
+    async function postToAppsScript(payload) {
+      // Em no-cors não consegues ler a resposta.
+      // Usamos text/plain para ficar no perfil de simple request do browser.
+      await fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      });
+    }
 
-async function registarSaida(token, entradaTs) {
-  const saidaTs   = Date.now();
-  const minutos   = Math.floor((saidaTs - entradaTs) / 60000);
-  const segundos  = Math.floor((saidaTs - entradaTs) / 1000) % 60;
+    async function registarEntrada() {
+      const token = gerarToken();
+      const ts = Date.now();
 
-  renderLoading('A registar saída...');
+      localStorage.setItem(STORAGE_KEY, token);
+      localStorage.setItem(STORAGE_TS, String(ts));
 
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token_id:         token,
-        saida_ts:         new Date(saidaTs).toISOString(),
-        entrada_ts:       new Date(entradaTs).toISOString(),
-        tempo_espera_min: minutos,
-        modo:             'saida'
-      })
-    });
-    clearToken();
-    renderSaidaOk(minutos, segundos);
-  } catch (e) {
-    clearToken();
-    renderSaidaOk(minutos, segundos, true);
-  }
-}
+      renderLoading('A registar entrada...');
 
-// ─── RENDER: LOADING ─────────────────────────────────────────────────────────
-function renderLoading(msg) {
-  document.getElementById('mainCard').className = 'card fade-in';
-  document.getElementById('appContent').innerHTML = `
-    <div class="spinner"></div>
-    <p class="sub">${msg}</p>
-  `;
-}
+      try {
+        await postToAppsScript({
+          token_id: token,
+          codigo_curto: token.slice(-4).toUpperCase(),
+          entrada_ts: new Date(ts).toISOString(),
+          modo: 'entrada'
+        });
 
-// ─── RENDER: ENTRADA OK ──────────────────────────────────────────────────────
-function renderEntradaOk(token, offline = false) {
-  const card = document.getElementById('mainCard');
-  card.className = 'card state-ok fade-in';
-  const codigo = token.slice(-4).toUpperCase();
+        renderEntradaOk(token);
+      } catch (e) {
+        renderEntradaErro(token);
+      }
+    }
 
-  document.getElementById('appContent').innerHTML = `
-    <span class="icon">🎟️</span>
-    <div class="status-badge badge-ok">Entrada registada</div>
-    <h1>Estás na fila!</h1>
-    <p class="sub">Guarda este código. A funcionária vai pedir-te quando chegares à caixa.</p>
-    <div class="token-display">
-      <div class="token-label">O teu código</div>
-      <div class="token-code">${codigo}</div>
-      <div class="token-hint">Mostra este ecrã na caixa${offline ? ' · (modo offline — registo local)' : ''}</div>
-    </div>
-  `;
-}
+    async function registarSaida(token, entradaTs) {
+      const saidaTs = Date.now();
+      const minutos = Math.floor((saidaTs - entradaTs) / 60000);
+      const segundos = Math.floor((saidaTs - entradaTs) / 1000) % 60;
 
-// ─── RENDER: SAÍDA OK ────────────────────────────────────────────────────────
-function renderSaidaOk(minutos, segundos, offline = false) {
-  const card = document.getElementById('mainCard');
-  card.className = 'card state-ok fade-in';
-  const tempoStr = `${minutos}m ${segundos}s`;
+      renderLoading('A registar saída...');
 
-  document.getElementById('appContent').innerHTML = `
-    <span class="icon">🎉</span>
-    <div class="status-badge badge-ok">Registo completo</div>
-    <h1>Obrigado!</h1>
-    <p class="sub">Tempo de espera registado:</p>
-    <div class="time-display">${tempoStr}</div>
-    <div class="time-label">tempo na fila</div>
-    <br><br>
-    <p class="sub" style="font-size:12px">${offline ? 'Registo guardado localmente.' : 'Dados guardados. Bom apetite! 🍴'}</p>
-  `;
-}
+      try {
+        await postToAppsScript({
+          token_id: token,
+          saida_ts: new Date(saidaTs).toISOString(),
+          entrada_ts: new Date(entradaTs).toISOString(),
+          tempo_espera_min: minutos,
+          modo: 'saida'
+        });
 
-// ─── UTILS ───────────────────────────────────────────────────────────────────
-function gerarToken() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random() * 16 | 0;
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
+        clearToken();
+        renderSaidaOk(minutos, segundos);
+      } catch (e) {
+        renderSaidaErro(minutos, segundos);
+      }
+    }
 
-function clearToken() {
-  localStorage.removeItem(STORAGE_KEY);
-  localStorage.removeItem(STORAGE_TS);
-}
+    function renderLoading(msg) {
+      document.getElementById('mainCard').className = 'card fade-in';
+      document.getElementById('appContent').innerHTML = `
+        <div class="spinner"></div>
+        <p class="sub">${msg}</p>
+      `;
+    }
 
+    function renderEntradaOk(token) {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-ok fade-in';
+      const codigo = token.slice(-4).toUpperCase();
 
-</script>
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">🎟️</span>
+        <div class="status-badge badge-ok">Entrada registada</div>
+        <h1>Estás na fila!</h1>
+        <p class="sub">No fim, lê o QR da caixa com este mesmo telemóvel.</p>
+        <div class="token-display">
+          <div class="token-label">Código de reserva</div>
+          <div class="token-code">${codigo}</div>
+          <div class="token-hint">Usa apenas se houver falha no registo automático</div>
+        </div>
+      `;
+    }
+
+    function renderEntradaErro(token) {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-erro fade-in';
+      const codigo = token.slice(-4).toUpperCase();
+
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">⚠️</span>
+        <div class="status-badge badge-erro">Falha no envio</div>
+        <h1>Registo não confirmado</h1>
+        <p class="sub">O código ficou guardado neste telemóvel, mas o servidor não confirmou a gravação.</p>
+        <div class="token-display">
+          <div class="token-label">Código de reserva</div>
+          <div class="token-code">${codigo}</div>
+          <div class="token-hint">Volta a tentar ou usa este código como fallback</div>
+        </div>
+        <button class="btn btn-reset" onclick="renderEntrada()">Voltar</button>
+      `;
+    }
+
+    function renderSaidaOk(minutos, segundos) {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-ok fade-in';
+      const tempoStr = `${minutos}m ${segundos}s`;
+
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">🎉</span>
+        <div class="status-badge badge-ok">Registo concluído</div>
+        <h1>Obrigado!</h1>
+        <p class="sub">Tempo de espera registado:</p>
+        <div class="time-display">${tempoStr}</div>
+        <div class="time-label">tempo na fila</div>
+        <br><br>
+        <p class="sub" style="font-size:12px">Bom apetite 🍴</p>
+      `;
+    }
+
+    function renderSaidaErro(minutos, segundos) {
+      const card = document.getElementById('mainCard');
+      card.className = 'card state-erro fade-in';
+      const tempoStr = `${minutos}m ${segundos}s`;
+
+      document.getElementById('appContent').innerHTML = `
+        <span class="icon">⚠️</span>
+        <div class="status-badge badge-erro">Falha no envio</div>
+        <h1>Saída não confirmada</h1>
+        <p class="sub">O servidor não confirmou a gravação da saída.</p>
+        <div class="time-display">${tempoStr}</div>
+        <div class="time-label">tempo calculado localmente</div>
+        <button class="btn btn-reset" onclick="renderSaida()">Tentar novamente</button>
+      `;
+    }
+
+    function gerarToken() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    }
+
+    function clearToken() {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_TS);
+    }
+  </script>
 </body>
 </html>
