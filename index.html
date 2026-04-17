@@ -259,7 +259,7 @@ function renderEntrada() {
     <span class="icon">🍽️</span>
     <div class="status-badge badge-entrada">Início da fila</div>
     <h1>Bem-vindo à cantina</h1>
-    <p class="sub">Carrega no botão para registar a tua entrada na fila. Vais receber um código — mostra-o na caixa.</p>
+    <p class="sub">Carrega no botão para registar a tua entrada na fila.</p>
     <button class="btn btn-entrada" onclick="registarEntrada()">Registar entrada</button>
   `;
 }
@@ -272,11 +272,11 @@ function renderJaNaFila(token, minutos) {
     <span class="icon">⏳</span>
     <div class="status-badge badge-entrada">Na fila</div>
     <h1>Já estás registado</h1>
-    <p class="sub">Entraste há ${minutos} min. Mostra o código na caixa ao pagar.</p>
+    <p class="sub">Entraste há ${minutos} min. </p>
     <div class="token-display">
       <div class="token-label">O teu código</div>
       <div class="token-code">${codigo}</div>
-      <div class="token-hint">A funcionária vai pedir este código ao pagar</div>
+      <div class="token-hint">Não te esqueças de registar a saída no final da fila</div>
     </div>
     <button class="btn btn-reset" onclick="clearToken(); renderEntrada()">Não sou eu — limpar</button>
   `;
@@ -387,11 +387,11 @@ function renderEntradaOk(token, offline = false) {
     <span class="icon">🎟️</span>
     <div class="status-badge badge-ok">Entrada registada</div>
     <h1>Estás na fila!</h1>
-    <p class="sub">Guarda este código. A funcionária vai pedir-te quando chegares à caixa.</p>
+    <p class="sub">No final da fila regista a saída. Obrigado!</p>
     <div class="token-display">
       <div class="token-label">O teu código</div>
       <div class="token-code">${codigo}</div>
-      <div class="token-hint">Mostra este ecrã na caixa${offline ? ' · (modo offline)' : ''}</div>
+      <div class="token-hint"> No final da fila regista a saída.${offline ? ' · (modo offline)' : ''}</div>
     </div>
   `;
 }
